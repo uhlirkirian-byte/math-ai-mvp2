@@ -1,0 +1,13 @@
+{
+  "name": "math-ai-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A lightweight Math AI MVP with a local solver fallback and optional OpenAI-backed explanations.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

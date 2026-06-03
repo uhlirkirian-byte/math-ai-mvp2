@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Math AI MVP</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <section class="assessment-screen" id="assessmentScreen">
+      <div class="assessment-shell">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Math AI MVP</p>
+            <h1>数学认知诊断</h1>
+          </div>
+          <div class="status-pill">
+            <span class="dot"></span>
+            <span>约 2 分钟</span>
+          </div>
+        </header>
+
+        <section class="panel assessment-card">
+          <div class="assessment-intro">
+            <p class="eyebrow">Before Tutoring</p>
+            <h2>先了解学生怎么想，再决定怎么讲。</h2>
+            <p>
+              这个短测会粗略判断学生的数感、代数基础、读题能力和解题策略。
+              结果会影响后面 AI 的提示粒度与讲解方式。
+            </p>
+          </div>
+
+          <form id="assessmentForm" class="assessment-form"></form>
+
+          <section class="paper-upload-box">
+            <div>
+              <p class="eyebrow">Paper Scan</p>
+              <h2>上传近期试卷照片</h2>
+              <p>建议上传最近 1-3 张错题较多或有批改痕迹的试卷页，用来分析知识点短板和错因类型。</p>
+            </div>
+            <label class="upload-drop">
+              <input id="paperInput" type="file" accept="image/*" multiple>
+              <span>选择照片</span>
+              <small id="paperUploadHint">支持手机拍照后的 JPG/PNG 图片</small>
+            </label>
+            <div class="paper-preview" id="paperPreview"></div>
+          </section>
+
+          <div class="assessment-actions">
+            <button class="secondary-button" type="button" id="skipAssessment">跳过</button>
+            <button class="primary-button" type="button" id="finishAssessment">完成诊断</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <main class="app-shell is-hidden" id="appShell">
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Math AI MVP</p>
+            <h1>数学助教</h1>
+          </div>
+          <div class="status-pill" id="statusPill">
+            <span class="dot"></span>
+            <span>本地可用</span>
+          </div>
+        </header>
+
+        <section class="profile-strip" id="profileStrip"></section>
+
+        <section class="panel paper-analysis-panel">
+          <div class="result-head">
+            <div>
+              <p class="eyebrow">Paper Analysis</p>
+              <h2>试卷能力分析</h2>
+            </div>
+            <button class="secondary-button compact-button" type="button" id="analyzePaper">分析试卷</button>
+          </div>
+          <label class="upload-drop inline-upload">
+            <input id="paperInputMain" type="file" accept="image/*" multiple>
+            <span>补充上传试卷照片</span>
+            <small id="paperUploadHintMain">还没有照片时，可在这里上传</small>
+          </label>
+          <div class="paper-preview" id="paperPreviewMain"></div>
+          <div class="checks paper-analysis-result" id="paperAnalysisResult">
+            <div class="check-item">完成认知测试并上传试卷后，可以生成更接近真实水平的能力分析。</div>
+          </div>
+        </section>
+
+        <section class="solver-layout">
+          <form class="panel solver-panel" id="solveForm">
+            <div class="field-head">
+              <label for="problem">题目</label>
+              <button class="icon-button" type="button" id="clearButton" title="清空">×</button>
+            </div>
+            <textarea id="problem" name="problem" rows="7" placeholder="例如：2x + 5 = 17"></textarea>
+
+            <div class="controls">
+              <label>
+                阶段
+                <select id="level" name="level">
+                  <option value="primary">小学</option>
+                  <option value="middle" selected>初中</option>
+                  <option value="high">高中</option>
+                  <option value="college">大学</option>
+                </select>
+              </label>
+              <label>
+                模式
+                <select id="mode" name="mode">
+                  <option value="steps" selected>步骤</option>
+                  <option value="hint">提示</option>
+                  <option value="check">检查</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="examples" aria-label="示例题">
+              <button type="button" data-example="18 ÷ (3 + 3) + 7 * 2">四则运算</button>
+              <button type="button" data-example="2x + 5 = 17">一次方程</button>
+              <button type="button" data-example="x^2 - 5x + 6 = 0">二次方程</button>
+              <button type="button" data-example="一个长方形周长是 30，长比宽多 3，求长和宽">应用题</button>
+            </div>
+
+            <button class="primary-button" type="submit">
+              <span>解题</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </form>
+
+          <section class="panel result-panel" aria-live="polite">
+            <div class="result-head">
+              <div>
+                <p class="eyebrow">Solution</p>
+                <h2 id="topic">等待题目</h2>
+              </div>
+              <span class="source-tag" id="sourceTag">Ready</span>
+            </div>
+
+            <div class="answer-box">
+              <span>答案</span>
+              <strong id="answer">输入题目后开始</strong>
+            </div>
+
+            <ol class="steps" id="steps">
+              <li>系统已就绪。</li>
+            </ol>
+
+            <div class="checks" id="checks"></div>
+          </section>
+        </section>
+      </section>
+
+      <aside class="history-panel">
+        <div class="history-head">
+          <h2>学习画像</h2>
+          <button class="icon-button" type="button" id="retakeAssessment" title="重测">↻</button>
+        </div>
+        <div class="profile-panel" id="profilePanel"></div>
+
+        <div class="history-head history-second-head">
+          <h2>记录</h2>
+          <button class="icon-button" type="button" id="clearHistory" title="清除记录">⌫</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </aside>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
